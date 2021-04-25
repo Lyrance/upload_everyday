@@ -1,6 +1,6 @@
 ### 校园集结号自动上报脚本
 
-对[antlinkercampus](https://github.com/jj4/antlinkercampus)进行二次开发，仅适用于2021寒假的青岛大学每日上报
+对[antlinkercampus](https://github.com/jj4/antlinkercampus)进行二次开发，仅适用于青岛大学在校园集结号上的每日上报
 
 仅需填入
 
