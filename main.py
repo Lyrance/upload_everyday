@@ -1,23 +1,27 @@
+# coding:utf-8
+# !/usr/bin/python
+import importlib, sys
+import time
+
+importlib.reload(sys)
 import requests, json, base64, hashlib
 import smtplib
-from smtplib import SMTP_SSL
 from email.mime.text import MIMEText
 from email.header import Header
 import datetime
 
+
 class antlinker(object):
     def __init__(self):
-        self.usr = '123456789'  # 手机号
-        self.pwd = '123456789'  # 密码
+        self.usr = ''  # 手机号
+        self.pwd = ''  # 密码
         self.s = requests.Session()
         self.headers = {
             'User-Agent': 'User-Agent: Dalvik/2.1.0 (Linux; U; Android 11; MI 10 MIUI/21.1.13)',
             'Authorization': 'BASIC '
                              'NTgyYWFhZTU5N2Q1YjE2ZTU4NjhlZjVmOmRiMzU3YmRiNmYzYTBjNzJkYzJkOWM5MjkzMmFkMDYyZWRkZWE5ZjY='
         }
-    
-    
- 
+
     # 登录 获取token
     def get_token(self):
         usr = "{\"LoginModel\":1,\"Service\":\"ANT\",\"UserName\":\"%s\"}" % self.usr
@@ -71,64 +75,92 @@ class antlinker(object):
             with open("./access.token", "w") as f:
                 f.write(access_token)
         return access_token
-
-    def info_get(self):
+        
+    #信息采集
+    def upload_info(self):
         url = "https://h5api.xiaoyuanjijiehao.com/api/staff/interface"
         data = "{  \"Body\" : \"{\\\"UID\\\":\\\"\\\"}\",  \"Router\" : \"\/api\/newcommtask\/getstudenttasklist\",  \"Method\" : \"POST\"}"
         # 先获取TaskCode
-        upload = self.s.post(url, headers=self.headers, data = data.encode('utf-8'))
+        upload = self.s.post(url, headers=self.headers, data=data.encode('utf-8'))
         response = json.loads(upload.text)
-        level2 = response['Data']
-        level3 = level2['list']
-        flag = False
-        # 层层套着的信息
-        # 找到最新的TaskCode
-        for level4 in level3:
-            for name in level4:
-                if name == 'TaskCode':
-                    flag = True
-                    # 抓包得到的数据
-                    data = "123456789"
-                    upload = self.s.post(url, headers=self.headers, data=data.encode('utf-8'))
-                    response = json.loads(upload.text)
-                    try:
-                        decoded = response["FeedbackText"]
-                    except Exception as reason:
-                        decoded = str(reason) + '错误'
-                    return decoded
-        return "失败"
+        isSuccess = False
+        for i in range(5) :
+            try:
+                StartTime = response["Data"]["list"][i]["StartTime"]
+                Title = response["Data"]["list"][i]["Title"]
+                TaskCode = response['Data']['list'][i]['TaskCode']
+            except:
+                continue
+
+            #判断不是体温上报的表项
+            if Title.find("体温") == -1 :
+                continue
+            #判断是不是今天的
+            if StartTime.find(time.strftime("%Y-%m-%d", time.localtime())) == -1 :
+                continue
+
+            #上报
+            data = "{\"Body\" : \"{\\\"Field\\\":[{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"学院\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"年级\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"专业\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"班级\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"学号\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"姓名\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"< 37.3℃\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"< 37.3℃\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"< 37.3℃\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}],\\\"TaskCode\\\":\\\"" + \
+                   TaskCode + "\\\",\\\"TemplateId\\\":\\\"0e284f0a-5025-4d41-b9cc-d69b3deea5d3\\\"}\",  \"Router\" : \"\/api\/newcustomerform\/submit\",  \"Method\" : \"POST\"}"
+            upload = self.s.post(url, headers=self.headers, data=data.encode('utf-8'))
+            response = json.loads(upload.text)
+            try:
+                feedback = response["FeedbackText"]
+            except Exception as reason:
+                feedback = str(reason) + '错误'
+            if feedback.find("成功") != -1:
+                isSuccess = True
+        return isSuccess
+
+    #体温上报
+    def upload_temperature(self):
+        url = "https://h5api.xiaoyuanjijiehao.com/api/staff/interface"
+        data = {
+            "Router": "/api/studentncpback/puttemperature",
+            "Method": "POST",
+            "Body": "{\"user\":\"67702748-497a-11ea-98a9-005056bc6061\",\"temperature\":\"1\",\"reportArea\":\"山东省青岛市崂山区\",\"memo\":\"\"}"
+        }
+        upload = self.s.post(url, headers=self.headers, data=json.dumps(data).encode('utf-8'))
+        response = json.loads(upload.text)
+        try:
+            feedback = response["FeedbackText"]
+        except Exception as reason:
+            feedback = str(reason)
+        return feedback
+
 
 gogogo = antlinker()
 try:
     gogogo.refresh_token()
 except:
-    gogogo.get_token()    
-state = gogogo.info_get()
+    gogogo.get_token()
+state = gogogo.upload_info()
+#gogogo.upload_temperature()
 
 # 获取时间信息
 time1 = datetime.datetime.now()
-time1_str = datetime.datetime.strftime(time1,'%Y-%m-%d %H:%M:%S')
+time1_str = datetime.datetime.strftime(time1, '%Y-%m-%d %H:%M:%S')
 
-mess = time1_str+state
+if state == True:
+    mess = time1_str + "成功"
+else:
+    mess = time1_str + "失败"
+    mess = "" + mess
+    mail_host = "smtp.163.com"  # 设置服务器
+    mail_user = ""  # 用户名
+    mail_pass = ""  # 口令
 
-# 每天通过邮件报告上报信息
-mail_info = {
-    "from": "",
-    "to": "",
-    "host": "smtp.163.com",
-    "username": "",
-    "password": "",
-    "subject": mess,
-    "text": "每日报告",
-    "encoding": "utf-8"
-}
-smtp = SMTP_SSL(mail_info["host"])
-smtp.set_debuglevel(1)
-smtp.ehlo(mail_info["host"])
-smtp.login(mail_info["username"], mail_info["password"])
-msg = MIMEText(mail_info["text"], "plain", mail_info["encoding"])
-msg["Subject"] = Header(mail_info["subject"], mail_info["encoding"])
-msg["from"] = mail_info["from"]
-msg["to"] = mail_info["to"]
-smtp.sendmail(mail_info["from"], mail_info["to"], msg.as_string())
-smtp.quit()
+    sender = ''
+    receivers = ['']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
+
+    message = MIMEText(mess, 'plain', 'utf-8')
+    message['From'] = Header(" ", 'utf-8')
+    message['To'] = Header(" ", 'utf-8')
+
+    subject = mess
+    message['Subject'] = Header(subject, 'utf-8')
+
+    smtpObj = smtplib.SMTP()
+    smtpObj.connect(mail_host, 25)  # 25 为 SMTP 端口号
+    smtpObj.login(mail_user, mail_pass)
+    smtpObj.sendmail(sender, receivers, message.as_string())
