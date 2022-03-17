@@ -111,12 +111,12 @@ class antlinker(object):
                    "\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"" + self.clas +  \
                    "\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"" + self.id +    \
                    "\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"" + self.name +  \
-                   "\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"< 37.3℃\\\"}," \
+                   "\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"浮山校区\\\"}," \
+                   "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"无\\\"}," \
+                   "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"370212\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"< 37.3℃\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"< 37.3℃\\\"}," \
-                   "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
-                   "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
-                   "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
+                   "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"< 37.3℃\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
