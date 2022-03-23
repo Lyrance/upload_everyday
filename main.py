@@ -20,6 +20,9 @@ class antlinker(object):
         self.clas = person['clas']
         self.id = person['id']
         self.name = person['name']
+        self.cnum = person['checkNum']
+        self.date = person['date']
+        self.location = person['location']
 
         self.s = requests.Session()
         self.headers = {
@@ -108,17 +111,17 @@ class antlinker(object):
             data = "{\"Body\" : \"{\\\"Field\\\":[{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"" + self.college + \
                    "\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"" + self.grade + \
                    "\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"" + self.major + \
-                   "\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"" + self.clas +  \
-                   "\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"" + self.id +    \
-                   "\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"" + self.name +  \
-                   "\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"浮山校区\\\"}," \
+                   "\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"" + self.clas + \
+                   "\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"" + self.id + \
+                   "\\\"},{\\\"FieldCode\\\":\\\"disabled\\\",\\\"Content\\\":\\\"" + self.name + \
+                   "\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"" + self.location + "\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"无\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"370212\\\"}," \
+                   "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"" + self.cnum +"\\\"}," \
+                   "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"" + self.date +"\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"< 37.3℃\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"< 37.3℃\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"< 37.3℃\\\"}," \
-                   "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
-                   "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
@@ -164,7 +167,10 @@ for person in load_dict:
     except:
         gogogo.get_token()
     state = gogogo.upload_info()
-    gogogo.upload_temperature()
+    # print(state)
+
+    # 非常远古的那个体温上报
+    # gogogo.upload_temperature()
     time.sleep(10)
 
 # 获取时间信息
