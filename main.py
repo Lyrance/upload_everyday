@@ -117,11 +117,11 @@ class antlinker(object):
                    "\\\"},{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"" + self.location + "\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"无\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"370212\\\"}," \
-                   "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"" + self.cnum +"\\\"}," \
-                   "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"" + self.date +"\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"< 37.3℃\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"< 37.3℃\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"< 37.3℃\\\"}," \
+                   "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
+                   "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
                    "{\\\"FieldCode\\\":\\\"\\\",\\\"Content\\\":\\\"否\\\"}," \
@@ -159,14 +159,16 @@ class antlinker(object):
 with open("info.json", 'r', encoding="UTF-8") as load_f:
     load_dict = json.load(load_f)
 
+state = True
 for person in load_dict:
     p1 = load_dict[person]
-    gogogo = antlinker(p1)
+    uploader = antlinker(p1)
     try:
-        gogogo.refresh_token()
+        uploader.refresh_token()
     except:
-        gogogo.get_token()
-    state = gogogo.upload_info()
+        uploader.get_token()
+    if uploader.upload_info() == False:
+        state = False
     # print(state)
 
     # 非常远古的那个体温上报
